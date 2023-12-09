@@ -1,0 +1,5 @@
+dynaconf
+pandas
+pydantic
+pydash
+requests

@@ -1,0 +1,39 @@
+# >>> common settings
+sprint_id: "10"
+reports_directory: _reports
+
+# >>> 00-jira-filter-setup
+jql_filters:
+  - jql_filter_name: "all"
+    jql_template: |
+      issuetype NOT IN (Sub-task) AND
+      project = DEV AND
+      sprint = "Sprint {sprint_id}"
+
+  - jql_filter_name: "unplanned"
+    jql_template: |
+      issuetype NOT IN (Sub-task) AND
+      project = DEV AND
+      sprint = "Sprint {sprint_id}" AND
+      comment ~ "Issue Added After Sprint Started: Sprint {sprint_id}"
+
+  - jql_filter_name: "planned"
+    jql_template: |
+      issuetype NOT IN (Sub-task) AND
+      project = DEV AND
+      sprint = "Sprint {sprint_id}" AND
+      filter != "unplanned"
+
+# >>> 01-extract
+jql_statements:
+  issues_planned: "filter='planned'"
+  issues_unplanned: "filter='unplanned'"
+
+# >>> 02-transform
+issue_custom_field:
+  team:
+    api_path: fields.customfield_00001[0].value
+  area:
+    api_path: fields.customfield_00002[0].value
+  sprints:
+    api_path: fields.customfield_00003
